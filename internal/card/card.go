@@ -52,11 +52,23 @@ func careErrorMessage(code stripe.ErrorCode) string {
 
 	switch code {
 	case stripe.ErrorCodeCardDeclined:
-		msg = "卡片被拒絕!"
+		msg = "您的卡片被拒絕! / Your card was declined!"
 	case stripe.ErrorCodeExpiredCard:
-		msg = "卡片已經過期!"
+		msg = "卡片已經過期! / Your card is expired!"
+	case stripe.ErrorCodeIncorrectNumber:
+		msg = "錯誤的CVC碼! / Incorrect CVC code!"
+	case stripe.ErrorCodeIncorrectZip:
+		msg = "錯誤的郵遞區號(zip/postal)! / Incorrect zip/postal code!"
+	case stripe.ErrorCodeAmountTooLarge:
+		msg = "金額太大 無法向您的卡片收費! / The amount is too large to charge to your card!"
+	case stripe.ErrorCodeAmountTooSmall:
+		msg = "金額太小 無法向您的卡片收費! / The amount is too small to charge to your card!"
+	case stripe.ErrorCodeBalanceInsufficient:
+		msg = "餘額不足! / Insufficient balance!"
+	case stripe.ErrorCodePostalCodeInvalid:
+		msg = "無效的郵遞區號! / Invalid postal!"
 	default:
-		msg = "卡片被拒絕!"
+		msg = "您的卡片被拒絕! / Your card was declined!"
 	}
 
 	return msg
