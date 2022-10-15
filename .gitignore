@@ -1,4 +1,4 @@
 .idea
 .air.toml
 air.toml
-Makefile
+/Makefile
