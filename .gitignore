@@ -3,4 +3,5 @@
 air.toml
 /Makefile
 .fleet
+/tmp
 /dist
