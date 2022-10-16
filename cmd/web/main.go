@@ -1,8 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/koopa0/go-stripe/internal/driver"
 	"html/template"
 	"log"
 	"net/http"
@@ -56,6 +58,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
 	flag.StringVar(&cfg.api, "api", "http://localhost:4001", "URL to api")
+	flag.StringVar(&cfg.db.dsn, "dsn", "host=localhost port=5432 dbname=widgets user=koopa password= sslmode=", "")
 
 	flag.Parse()
 
@@ -64,6 +67,22 @@ func main() {
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	// connect to database
+	log.Println("Connecting to database...")
+	connectionString := cfg.db.dsn
+	db, err := driver.ConnectSQL(connectionString)
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying...")
+	}
+	log.Println("Connected to database!")
+
+	defer func(SQL *sql.DB) {
+		err := SQL.Close()
+		if err != nil {
+
+		}
+	}(db.SQL)
 
 	tc := make(map[string]*template.Template)
 
@@ -75,7 +94,7 @@ func main() {
 		version:       version,
 	}
 
-	err := app.serve()
+	err = app.serve()
 	if err != nil {
 		app.errorLog.Println(err)
 		log.Fatal(err)

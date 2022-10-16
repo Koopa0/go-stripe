@@ -1,8 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/koopa0/go-stripe/internal/driver"
 	"log"
 	"net/http"
 	"os"
@@ -51,16 +53,31 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", 4001, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production|maintenance}")
+	flag.StringVar(&cfg.db.dsn, "dsn", "host=localhost port=5432 dbname=widgets user=koopa password= sslmode=", "")
 
 	flag.Parse()
-
-	log.Println("hello world")
 
 	cfg.stripe.key = os.Getenv("STRIPE_KEY")
 	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	// connect to database
+	log.Println("Connecting to database...")
+	connectionString := cfg.db.dsn
+	db, err := driver.ConnectSQL(connectionString)
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying...")
+	}
+	log.Println("Connected to database!")
+
+	defer func(SQL *sql.DB) {
+		err := SQL.Close()
+		if err != nil {
+
+		}
+	}(db.SQL)
 
 	app := &application{
 		config:   cfg,
@@ -69,7 +86,7 @@ func main() {
 		version:  version,
 	}
 
-	err := app.serve()
+	err = app.serve()
 	if err != nil {
 		app.errorLog.Println(err)
 		log.Fatal(err)
