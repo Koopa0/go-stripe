@@ -22,7 +22,13 @@ type templateData struct {
 	CSSVersion      string
 }
 
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"formatCurrency": formatCurrency,
+}
+
+func formatCurrency(n int) string {
+	return fmt.Sprintf("NT$%d", n)
+}
 
 //go:embed templates
 var templateFS embed.FS
