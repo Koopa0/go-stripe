@@ -6,11 +6,7 @@ import (
 )
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
-	stringMap := make(map[string]string)
-	stringMap["publishable_key"] = app.config.stripe.key
-	if err := app.renderTemplate(w, r, "terminal", &templateData{
-		StringMap: stringMap,
-	}, "stripe-js"); err != nil {
+	if err := app.renderTemplate(w, r, "terminal", nil, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -55,13 +51,10 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 		Price:          1000,
 	}
 
-	stringMap := make(map[string]string)
-	stringMap["publishable_key"] = app.config.stripe.key
 	data := make(map[string]any)
 	data["widget"] = widget
 	if err := app.renderTemplate(w, r, "buy-once", &templateData{
-		Data:      data,
-		StringMap: stringMap,
+		Data: data,
 	}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
