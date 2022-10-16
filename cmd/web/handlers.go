@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/koopa0/go-stripe/internal/models"
 	"net/http"
 )
 
@@ -45,10 +46,21 @@ func (app *application) PaymentSucceed(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
+
+	widget := models.Widget{
+		ID:             1,
+		Name:           "amazing show",
+		Description:    "amazing!",
+		InventoryLevel: 10,
+		Price:          1000,
+	}
+
 	stringMap := make(map[string]string)
 	stringMap["publishable_key"] = app.config.stripe.key
-
+	data := make(map[string]any)
+	data["widget"] = widget
 	if err := app.renderTemplate(w, r, "buy-once", &templateData{
+		Data:      data,
 		StringMap: stringMap,
 	}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)

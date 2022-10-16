@@ -2,6 +2,7 @@ package driver
 
 import (
 	"database/sql"
+	"github.com/koopa0/go-stripe/internal/models"
 	"time"
 
 	_ "github.com/jackc/pgconn"
@@ -9,19 +10,14 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-// DB holds the database connection pool
-type DB struct {
-	SQL *sql.DB
-}
-
-var dbConn = &DB{}
+var dbConn = &models.DBModel{}
 
 const maxOpenDbConn = 10
 const maxIdleDbConn = 5
 const maxDbLifetime = 5 * time.Minute
 
 // ConnectSQL database pool for Postgres
-func ConnectSQL(dsn string) (*DB, error) {
+func ConnectSQL(dsn string) (*models.DBModel, error) {
 	d, err := NewDatabase(dsn)
 	if err != nil {
 		panic(err)
@@ -31,7 +27,7 @@ func ConnectSQL(dsn string) (*DB, error) {
 	d.SetMaxIdleConns(maxIdleDbConn)
 	d.SetConnMaxLifetime(maxDbLifetime)
 
-	dbConn.SQL = d
+	dbConn.DB = d
 
 	err = testDB(d)
 	if err != nil {
@@ -63,4 +59,3 @@ func NewDatabase(dsn string) (*sql.DB, error) {
 	}
 	return db, nil
 }
-

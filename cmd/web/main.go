@@ -82,7 +82,7 @@ func main() {
 		if err != nil {
 
 		}
-	}(db.SQL)
+	}(db.DB)
 
 	tc := make(map[string]*template.Template)
 
