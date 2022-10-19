@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/koopa0/go-stripe/internal/driver"
+	"github.com/koopa0/go-stripe/internal/models"
 	"log"
 	"net/http"
 	"os"
@@ -30,6 +31,7 @@ type application struct {
 	infoLog  *log.Logger
 	errorLog *log.Logger
 	version  string
+	DB       models.DBModel
 }
 
 func (app *application) serve() error {
@@ -77,13 +79,16 @@ func main() {
 		if err != nil {
 
 		}
-	}(db.SQL)
+	}(db.DB)
 
 	app := &application{
 		config:   cfg,
 		infoLog:  infoLog,
 		errorLog: errorLog,
 		version:  version,
+		DB: models.DBModel{
+			DB: db.DB,
+		},
 	}
 
 	err = app.serve()

@@ -7,3 +7,4 @@ air.toml
 /dist
 /database.yml
 /static
+/migrations

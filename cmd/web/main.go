@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/koopa0/go-stripe/internal/driver"
+	"github.com/koopa0/go-stripe/internal/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -34,6 +35,7 @@ type application struct {
 	errorLog      *log.Logger
 	templateCache map[string]*template.Template
 	version       string
+	DB            models.DBModel
 }
 
 func (app *application) serve() error {
@@ -92,6 +94,9 @@ func main() {
 		errorLog:      errorLog,
 		templateCache: tc,
 		version:       version,
+		DB: models.DBModel{
+			DB: db.DB,
+		},
 	}
 
 	err = app.serve()
