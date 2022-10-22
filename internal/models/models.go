@@ -62,7 +62,7 @@ type Transaction struct {
 	Currency            string    `json:"currency"`
 	LastFour            string    `json:"last_four"`
 	BankReturnCode      string    `json:"bank_return_code"`
-	TransactionStatusId int       `json:"transaction_status_id"`
+	TransactionStatusID int       `json:"transaction_status_id"`
 	CreatedAt           time.Time `json:"-"`
 	UpdatedAt           time.Time `json:"-"`
 }
@@ -84,14 +84,14 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 	var widget Widget
 
 	query := `select 
-                   id, name
+                   id, name, description, inventory_level, price, coalesce(image,''), created_at, updated_at
               from 
                    widgets  
               where 
                    id = $1;`
 	row := m.DB.QueryRowContext(ctx, query, id)
 
-	err := row.Scan(&widget.ID, &widget.Name)
+	err := row.Scan(&widget.ID, &widget.Name, &widget.Description, &widget.InventoryLevel, &widget.Price, &widget.Image, &widget.CreatedAt, &widget.UpdatedAt)
 	if err != nil {
 		return widget, err
 	}
